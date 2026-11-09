@@ -9,41 +9,21 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=5">
+  <link rel="stylesheet" href="style.css?v=6">
 </head>
-<body>
+<body class="student-page">
   <header class="student-head">
     <img src="logo.png" alt="شعار حلقة ابن عقيل" class="student-logo">
     <h1 id="sName">...</h1>
     <p class="sub" id="sHalaqa"></p>
   </header>
 
-  <main class="container">
-    <div class="card-box center" id="content">جاري التحميل...</div>
+  <main class="container" id="content">
+    <p class="muted center">جاري التحميل...</p>
   </main>
 
-  <script type="module">
-    import { db, esc } from "./common.js?v=5";
-    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  <footer class="student-foot">حلقة ابن عقيل لتحفيظ القرآن الكريم</footer>
 
-    const k = new URLSearchParams(location.search).get("k");
-    const box = document.getElementById("content");
-
-    try {
-      const snap = k ? await getDoc(doc(db, "portal", k)) : null;
-      if (!snap || !snap.exists()) {
-        document.getElementById("sName").textContent = "حلقة ابن عقيل";
-        box.innerHTML = "الرابط غير صحيح أو انتهى. تواصل مع إدارة الحلقة للحصول على الرابط الجديد.";
-      } else {
-        const p = snap.data();
-        document.getElementById("sName").textContent = p.name;
-        document.getElementById("sHalaqa").textContent = p.halaqaName || "";
-        box.innerHTML = `<p>صفحة إنجاز الطالب <b>${esc(p.name)}</b></p>
-          <p class="muted">بتظهر هنا نسبة الحضور وآخر حفظ ومراجعة قريباً إن شاء الله.</p>`;
-      }
-    } catch (e) {
-      box.innerHTML = "تعذر التحميل، حاول مرة ثانية.";
-    }
-  </script>
+  <script type="module" src="s.js?v=6"></script>
 </body>
 </html>
