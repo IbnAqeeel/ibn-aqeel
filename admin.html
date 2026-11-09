@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>لوحة المشرف - حلقة ابن عقيل</title>
+  <link rel="icon" href="logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <img src="logo.png" alt="" class="topbar-logo">
+    <div class="topbar-title">حلقة ابن عقيل<small>لوحة المشرف</small></div>
+    <button class="link-btn" id="logoutBtn">خروج</button>
+  </header>
+
+  <nav class="tabs">
+    <button data-tab="halaqat" class="active">الحلقات</button>
+    <button data-tab="teachers">المعلمون</button>
+    <button data-tab="settings">أيام الحلقة</button>
+  </nav>
+
+  <main class="container" id="app">
+    <p class="muted center" id="loading">جاري التحميل...</p>
+
+    <section id="tab-halaqat" class="hidden">
+      <button class="btn" id="addHalaqaBtn">+ إضافة حلقة</button>
+      <div class="list" id="halaqatList"></div>
+    </section>
+
+    <section id="tab-teachers" class="hidden">
+      <button class="btn" id="addTeacherBtn">+ إضافة معلم</button>
+      <p class="hint">المعلم يدخل بحساب Gmail حقه. أضف إيميله هنا، وبعدها يقدر يدخل الموقع ويشوف حلقته فقط.</p>
+      <div class="list" id="teachersList"></div>
+    </section>
+
+    <section id="tab-settings" class="hidden">
+      <div class="card-box">
+        <h3>أيام انعقاد الحلقة</h3>
+        <p class="hint">اضغط على اليوم لتفعيله أو إلغائه.</p>
+        <div class="chips" id="daysBox"></div>
+        <button class="btn" id="saveDaysBtn">حفظ الأيام</button>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="modal">
+    <form method="dialog" id="modalForm">
+      <h3 id="modalTitle"></h3>
+      <div id="modalBody"></div>
+      <div class="row">
+        <button class="btn" value="ok">حفظ</button>
+        <button class="btn secondary" value="cancel" formnovalidate>إلغاء</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module" src="admin.js"></script>
+</body>
+</html>

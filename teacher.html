@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>صفحة المعلم - حلقة ابن عقيل</title>
+  <link rel="icon" href="logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <img src="logo.png" alt="" class="topbar-logo">
+    <div class="topbar-title">حلقة ابن عقيل<small id="halaqaName">صفحة المعلم</small></div>
+    <button class="link-btn" id="logoutBtn">خروج</button>
+  </header>
+
+  <main class="container">
+    <div class="card-box center" id="welcome">جاري التحميل...</div>
+  </main>
+
+  <script type="module">
+    import { requireRole, logout, esc } from "./common.js";
+    document.getElementById("logoutBtn").onclick = () => logout();
+
+    const r = await requireRole(["teacher"]);
+    const hName = r.halaqa ? r.halaqa.name : "لم تُحدد لك حلقة بعد";
+    document.getElementById("halaqaName").textContent = hName;
+    document.getElementById("welcome").innerHTML =
+      `<h3>أهلاً ${esc(r.teacher.name)} 👋</h3>
+       <p>حلقتك: <b>${esc(hName)}</b></p>
+       <p class="muted">صفحة تسجيل التحضير والتسميع بتكون هنا قريباً إن شاء الله.</p>`;
+  </script>
+</body>
+</html>

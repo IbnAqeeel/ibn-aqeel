@@ -13,3 +13,8 @@ export const SITE = {
   name: "حلقة ابن عقيل",
   logo: "logo.png"
 };
+
+// إيميلات المشرفين (لازم تكون نفسها في قواعد الحماية firestore.rules)
+export const ADMIN_EMAILS = [
+  "youseffsalemm29@gmail.com"
+];

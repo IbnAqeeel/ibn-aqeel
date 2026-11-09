@@ -10,55 +10,61 @@
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <main class="card">
-    <img src="logo.png" alt="شعار حلقة ابن عقيل" class="logo" id="logo">
+<body class="center-page">
+  <main class="card login-card">
+    <img src="logo.png" alt="شعار حلقة ابن عقيل" class="logo">
     <h1>حلقة ابن عقيل</h1>
     <p class="sub">نظام التحضير والتسميع</p>
 
     <button class="btn" id="loginBtn">تسجيل الدخول بحساب Google</button>
-    <button class="btn secondary hidden" id="logoutBtn">تسجيل الخروج</button>
-
     <div class="status" id="status"></div>
+    <button class="btn secondary hidden" id="logoutBtn">تسجيل الخروج</button>
   </main>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
-      from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { firebaseConfig } from "./config.js";
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+    import { auth, login, logout, getRole } from "./common.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
     const loginBtn = document.getElementById("loginBtn");
     const logoutBtn = document.getElementById("logoutBtn");
     const status = document.getElementById("status");
 
     function show(msg, isError = false) {
-      status.textContent = msg;
+      status.innerHTML = msg;
       status.className = "status show" + (isError ? " error" : "");
     }
 
     loginBtn.onclick = async () => {
       try {
-        await signInWithPopup(auth, new GoogleAuthProvider());
+        await login();
       } catch (e) {
-        show("ما تم تسجيل الدخول. رمز المشكلة: " + e.code, true);
+        if (e.code !== "auth/popup-closed-by-user" && e.code !== "auth/cancelled-popup-request") {
+          show("ما تم تسجيل الدخول. رمز المشكلة: " + e.code, true);
+        }
       }
     };
+    logoutBtn.onclick = () => logout();
 
-    logoutBtn.onclick = () => signOut(auth);
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        show("✅ أهلاً " + (user.displayName || "") + " — الاتصال بـ Firebase شغّال");
-        loginBtn.classList.add("hidden");
-        logoutBtn.classList.remove("hidden");
-      } else {
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
         status.className = "status";
         loginBtn.classList.remove("hidden");
         logoutBtn.classList.add("hidden");
+        return;
+      }
+      loginBtn.classList.add("hidden");
+      show("جاري الدخول...");
+      try {
+        const r = await getRole(user);
+        if (r.role === "admin") location.href = "admin.html";
+        else if (r.role === "teacher") location.href = "teacher.html";
+        else {
+          show("حسابك غير مضاف في النظام.<br>أرسل هذا الإيميل للمشرف:<br><b dir='ltr'>" + r.email + "</b>", true);
+          logoutBtn.classList.remove("hidden");
+        }
+      } catch (e) {
+        show("مشكلة في الاتصال بقاعدة البيانات. رمز المشكلة: " + e.code, true);
+        logoutBtn.classList.remove("hidden");
       }
     });
   </script>
