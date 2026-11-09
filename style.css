@@ -235,3 +235,36 @@ dialog input, dialog select {
 }
 dialog .row { display: flex; gap: 10px; margin-top: 8px; }
 dialog .row .btn { margin-top: 0; }
+
+/* ---------- المرحلة ٣: الطلاب ---------- */
+.row2 { display: flex; gap: 10px; }
+.row2 .btn { margin-top: 0; font-size: 1rem; padding: 14px 8px; }
+.chips.small { margin: 14px 0 10px; gap: 6px; }
+.chips.small .chip { padding: 7px 14px; font-size: 0.95rem; }
+.search {
+  width: 100%;
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+}
+.list-head { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; font-size: 0.9rem; }
+.list-head + .list { margin-top: 10px; }
+
+dialog { max-height: 88vh; overflow-y: auto; }
+.link-actions { display: flex; flex-direction: column; gap: 10px; margin: 14px 0 6px; }
+.link-actions .btn { margin-top: 0; text-align: center; text-decoration: none; }
+.btn.whatsapp { background: #1f9d55; }
+.preview { max-height: 40vh; overflow-y: auto; border: 1px solid var(--line); border-radius: 10px; margin-bottom: 10px; }
+.preview-row { display: flex; justify-content: space-between; gap: 10px; padding: 8px 12px; border-bottom: 1px solid var(--line); font-size: 0.95rem; }
+.preview-row:last-child { border-bottom: none; }
+.preview-row .warn { color: #b7791f; }
+
+/* ---------- صفحة الطالب ---------- */
+.student-head { text-align: center; padding: 28px 16px 8px; }
+.student-logo { width: 110px; }
+.student-head h1 { margin-top: 10px; }
+.student-head .sub { margin-bottom: 0; }
+.item-actions .small-btn { padding: 8px 11px; }

@@ -18,13 +18,29 @@
   </header>
 
   <nav class="tabs">
-    <button data-tab="halaqat" class="active">الحلقات</button>
+    <button data-tab="students" class="active">الطلاب</button>
+    <button data-tab="halaqat">الحلقات</button>
     <button data-tab="teachers">المعلمون</button>
-    <button data-tab="settings">أيام الحلقة</button>
+    <button data-tab="settings">الأيام</button>
   </nav>
 
   <main class="container" id="app">
     <p class="muted center" id="loading">جاري التحميل...</p>
+
+    <section id="tab-students" class="hidden">
+      <div class="row2">
+        <button class="btn" id="addStudentBtn">+ إضافة طالب</button>
+        <button class="btn secondary" id="importBtn">📥 استيراد Excel</button>
+      </div>
+      <input type="file" id="importFile" accept=".xlsx,.xls,.csv" hidden>
+      <div class="chips small" id="studentFilter"></div>
+      <input id="studentSearch" class="search" placeholder="🔍 بحث بالاسم...">
+      <div class="list-head">
+        <span id="studentCount" class="muted"></span>
+        <button class="small-btn" id="exportLinksBtn">📤 تصدير الروابط</button>
+      </div>
+      <div class="list" id="studentsList"></div>
+    </section>
 
     <section id="tab-halaqat" class="hidden">
       <button class="btn" id="addHalaqaBtn">+ إضافة حلقة</button>
@@ -52,12 +68,13 @@
       <h3 id="modalTitle"></h3>
       <div id="modalBody"></div>
       <div class="row">
-        <button class="btn" value="ok">حفظ</button>
-        <button class="btn secondary" value="cancel" formnovalidate>إلغاء</button>
+        <button class="btn" value="ok" id="modalOk">حفظ</button>
+        <button class="btn secondary" value="cancel" id="modalCancel" formnovalidate>إلغاء</button>
       </div>
     </form>
   </dialog>
 
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   <script type="module" src="admin.js"></script>
 </body>
 </html>
