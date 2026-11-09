@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>صفحة المعلم - حلقة ابن عقيل</title>
+  <title>التسجيل - حلقة ابن عقيل</title>
   <link rel="icon" href="logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,25 +13,32 @@
 <body>
   <header class="topbar">
     <img src="logo.png" alt="" class="topbar-logo">
-    <div class="topbar-title">حلقة ابن عقيل<small id="halaqaName">صفحة المعلم</small></div>
+    <div class="topbar-title">حلقة ابن عقيل<small id="halaqaName">التسجيل</small></div>
+    <a class="link-btn hidden" id="adminLink" href="admin.html">لوحة المشرف</a>
     <button class="link-btn" id="logoutBtn">خروج</button>
   </header>
 
+  <div class="daybar">
+    <select id="halaqaSelect" class="hidden"></select>
+    <div class="date-nav">
+      <button class="nav-btn" id="prevDay" aria-label="اليوم السابق">→</button>
+      <label class="date-box">
+        <span id="dateDay"></span>
+        <small id="dateSub"></small>
+        <input type="date" id="dateInput">
+      </label>
+      <button class="nav-btn" id="nextDay" aria-label="اليوم التالي">←</button>
+    </div>
+    <div class="day-warn hidden" id="dayWarn">هذا اليوم مو من أيام الحلقة</div>
+    <div class="counts" id="counts"></div>
+  </div>
+
   <main class="container">
-    <div class="card-box center" id="welcome">جاري التحميل...</div>
+    <p class="muted center" id="loading">جاري التحميل...</p>
+    <button class="btn secondary hidden" id="allPresentBtn">✔ تحضير الباقين "حاضر"</button>
+    <div class="list" id="studentsList"></div>
   </main>
 
-  <script type="module">
-    import { requireRole, logout, esc } from "./common.js";
-    document.getElementById("logoutBtn").onclick = () => logout();
-
-    const r = await requireRole(["teacher"]);
-    const hName = r.halaqa ? r.halaqa.name : "لم تُحدد لك حلقة بعد";
-    document.getElementById("halaqaName").textContent = hName;
-    document.getElementById("welcome").innerHTML =
-      `<h3>أهلاً ${esc(r.teacher.name)} 👋</h3>
-       <p>حلقتك: <b>${esc(hName)}</b></p>
-       <p class="muted">صفحة تسجيل التحضير والتسميع بتكون هنا قريباً إن شاء الله.</p>`;
-  </script>
+  <script type="module" src="teacher.js"></script>
 </body>
 </html>

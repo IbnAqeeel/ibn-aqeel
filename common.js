@@ -2,16 +2,38 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, getDoc }
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, doc, getDoc }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { firebaseConfig, SITE, ADMIN_EMAILS } from "./config.js";
 
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+// نحفظ نسخة على الجهاز: لو انقطع النت، التسجيل يُحفظ ويُرسل لما يرجع
+export const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+});
 export { SITE };
 
 export const DAY_NAMES = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+
+// تاريخ اليوم بصيغة 2026-11-10 (بتوقيت الجهاز)
+export function dateStr(d = new Date()) {
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+}
+export function parseDate(s) {
+  const [y, m, d] = s.split("-").map(Number);
+  return new Date(y, m - 1, d);
+}
+export function prettyDate(s) {
+  const d = parseDate(s);
+  const day = DAY_NAMES[d.getDay()];
+  let hijri = "";
+  try {
+    hijri = new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura", { day: "numeric", month: "long", year: "numeric" }).format(d);
+  } catch {}
+  const greg = new Intl.DateTimeFormat("ar-EG", { day: "numeric", month: "long" }).format(d);
+  return { day, hijri, greg };
+}
 
 export const normEmail = (e) => (e || "").trim().toLowerCase();
 

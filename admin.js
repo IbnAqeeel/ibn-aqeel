@@ -124,7 +124,7 @@ function addStudentOps(batch, name, halaqaId) {
   const token = makeToken();
   const ref = doc(collection(db, "students"));
   batch.set(ref, { name, halaqaId, active: true, token, createdAt: serverTimestamp() });
-  batch.set(doc(db, "portal", token), { studentId: ref.id, name, halaqaName: halaqaName(halaqaId), active: true });
+  batch.set(doc(db, "portal", token), { studentId: ref.id, name, halaqaId, halaqaName: halaqaName(halaqaId), active: true });
 }
 
 $("addStudentBtn").onclick = async () => {
@@ -151,7 +151,7 @@ async function editStudent(id) {
   const halaqaId = f.get("halaqaId");
   const batch = writeBatch(db);
   batch.update(doc(db, "students", id), { name, halaqaId });
-  batch.set(doc(db, "portal", s.token), { name, halaqaName: halaqaName(halaqaId) }, { merge: true });
+  batch.set(doc(db, "portal", s.token), { name, halaqaId, halaqaName: halaqaName(halaqaId) }, { merge: true });
   await batch.commit();
   toast(halaqaId !== s.halaqaId ? "تم نقل الطالب ✅" : "تم الحفظ ✅");
 }
@@ -173,6 +173,8 @@ async function deleteStudent(id) {
   const batch = writeBatch(db);
   batch.delete(doc(db, "students", id));
   batch.delete(doc(db, "portal", s.token));
+  const old = await getDocs(collection(db, "portal", s.token, "records"));
+  old.forEach((d) => batch.delete(d.ref));
   await batch.commit();
   toast("تم الحذف");
 }
@@ -207,8 +209,14 @@ document.addEventListener("click", async (e) => {
     const token = makeToken();
     const batch = writeBatch(db);
     batch.set(doc(db, "portal", token),
-      { studentId: s.id, name: s.name, halaqaName: halaqaName(s.halaqaId), active: s.active !== false });
+      { studentId: s.id, name: s.name, halaqaId: s.halaqaId, halaqaName: halaqaName(s.halaqaId), active: s.active !== false });
     batch.delete(doc(db, "portal", s.token));
+    // ننقل سجل الطالب للرابط الجديد
+    const old = await getDocs(collection(db, "portal", s.token, "records"));
+    old.forEach((d) => {
+      batch.set(doc(db, "portal", token, "records", d.id), d.data());
+      batch.delete(d.ref);
+    });
     batch.update(doc(db, "students", s.id), { token });
     await batch.commit();
     $("modal").close();
@@ -500,4 +508,20 @@ function renderAll() { renderStudents(); renderHalaqat(); renderTeachers(); }
   const s = await getDoc(doc(db, "settings", "main"));
   selectedDays = s.exists() ? s.data().days || [] : [];
   renderDays();
+
+  // تحديث لمرة وحدة: نضيف رقم الحلقة لصفحات الطلاب القديمة
+  if (!s.exists() || s.data().portalV !== 2) {
+    const hs = await getDocs(collection(db, "halaqat"));
+    const names = Object.fromEntries(hs.docs.map((d) => [d.id, d.data().name]));
+    const st = await getDocs(collection(db, "students"));
+    const batch = writeBatch(db);
+    st.forEach((d) => {
+      const x = d.data();
+      batch.set(doc(db, "portal", x.token),
+        { studentId: d.id, name: x.name, halaqaId: x.halaqaId, halaqaName: names[x.halaqaId] || "", active: x.active !== false },
+        { merge: true });
+    });
+    batch.set(doc(db, "settings", "main"), { portalV: 2 }, { merge: true });
+    await batch.commit();
+  }
 })();
