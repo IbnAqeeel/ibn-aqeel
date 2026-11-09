@@ -403,3 +403,4 @@ a.link-btn { text-decoration: none; font-size: 0.95rem; white-space: nowrap; }
 }
 .seg button.on { background: var(--brown); color: #fff; border-color: var(--brown); }
 .seg.kind { margin-bottom: 8px; }
+.details input.pages-other { margin-top: 6px; padding: 9px 11px; font-size: 0.95rem; }

@@ -1,5 +1,5 @@
-import { db, requireRole, logout, toast, esc, dateStr, parseDate, prettyDate } from "./common.js";
-import { SURAHS, surahName } from "./quran.js";
+import { db, requireRole, logout, toast, esc, dateStr, parseDate, prettyDate } from "./common.js?v=5";
+import { SURAHS, surahName } from "./quran.js?v=5";
 import {
   collection, doc, getDoc, getDocs, query, where, orderBy, limit, writeBatch, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -14,7 +14,9 @@ const ATT = [
 ];
 const GRADES = ["ممتاز", "جيد", "مقبول", "ضعيف"];
 const PAGES = [0.5, 1, 1.5, 2, 3];
-const pagesLabel = (p) => ({ 0.5: "½", 1: "١", 1.5: "١.٥", 2: "٢", 3: "٣" }[p] ?? String(p));
+const REVIEW_PAGES = [1, 2, 3, 5, 10, 20];
+const arDigits = (n) => String(n).replace(/\d/g, (d) => "٠١٢٣٤٥٦٧٨٩"[d]);
+const pagesLabel = (p) => (p === 0.5 ? "½" : arDigits(p));
 
 let me = null;          // بيانات المستخدم
 let days = [];          // أيام الحلقة
@@ -69,12 +71,14 @@ function summary(r) {
   if (h.surah || h.from || h.to || h.grade || h.pages) {
     let s = "حفظ: " + (h.surah ? surahName(h.surah) : "");
     if (h.from || h.to) s += ` ${h.from ?? ""}${h.to ? "-" + h.to : ""}`;
+    if (h.pages) s += ` • ${pagesLabel(h.pages)} وجه`;
     if (h.grade) s += ` (${h.grade})`;
     parts.push(s.trim());
   }
   const rv = r.review || {};
-  if (rv.value || rv.from || rv.to || rv.grade) {
+  if (rv.value || rv.from || rv.to || rv.grade || rv.pages) {
     let s = "مراجعة: " + (rv.value ? (rv.kind === "juz" ? "جزء " + rv.value : surahName(rv.value)) : "");
+    if (rv.pages) s += ` • ${pagesLabel(rv.pages)} وجه`;
     if (rv.grade) s += ` (${rv.grade})`;
     parts.push(s.trim());
   }
@@ -206,6 +210,9 @@ function cardHTML(s) {
           <input data-f="review.from" inputmode="numeric" placeholder="من" value="${esc(rv.from ?? "")}">
           <input data-f="review.to" inputmode="numeric" placeholder="إلى" value="${esc(rv.to ?? "")}">
         </div>
+        <div class="mini-label">عدد الأوجه</div>
+        ${seg("review.pages", REVIEW_PAGES, rv.pages, pagesLabel)}
+        <input class="pages-other" data-f="review.pages" inputmode="decimal" placeholder="أو اكتب العدد" value="${REVIEW_PAGES.includes(rv.pages) ? "" : esc(rv.pages ?? "")}">
         <div class="mini-label">التقييم</div>
         ${seg("review.grade", GRADES, rv.grade)}
       </div>
@@ -304,7 +311,7 @@ document.addEventListener("click", (e) => {
   if (a === "set") {
     const r = rec(sid);
     let v = b.dataset.v;
-    if (b.dataset.f === "hifz.pages") v = +v;
+    if (b.dataset.f.endsWith(".pages")) v = +v;
     setPath(r, b.dataset.f, getPath(r, b.dataset.f) === v ? null : v);
     rerenderCard(sid);
     scheduleSave(sid);

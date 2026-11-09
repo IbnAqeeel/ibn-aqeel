@@ -4,7 +4,7 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChang
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, doc, getDoc }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { firebaseConfig, SITE, ADMIN_EMAILS } from "./config.js";
+import { firebaseConfig, SITE, ADMIN_EMAILS } from "./config.js?v=5";
 
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);

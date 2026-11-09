@@ -1,4 +1,4 @@
-import { db, requireRole, logout, toast, esc, normEmail, DAY_NAMES } from "./common.js";
+import { db, requireRole, logout, toast, esc, normEmail, DAY_NAMES } from "./common.js?v=5";
 import {
   collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc,
   onSnapshot, serverTimestamp, writeBatch, query, where
