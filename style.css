@@ -447,3 +447,55 @@ a.link-btn { text-decoration: none; font-size: 0.95rem; white-space: nowrap; }
 .att-tag.absent { background: #fbe9e7; color: var(--danger); }
 .student-foot { text-align: center; color: var(--muted); font-size: 0.85rem; padding: 10px 0 24px; }
 .att-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 0; border-bottom: 1px dashed var(--line); }
+
+/* ---------- المرحلة ٦: التقارير ---------- */
+.invisible { visibility: hidden; }
+.controls { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+.controls select, .controls input {
+  width: 100%;
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+}
+.controls .mini-label { margin: 0; }
+.controls .row2 .btn.secondary { margin-top: 0; }
+.date-box.static { cursor: default; }
+.rep-card { margin-bottom: 12px; }
+.rep-card.total { border-top: 4px solid var(--gold); }
+.stat-grid.three { grid-template-columns: repeat(3, 1fr); margin-bottom: 8px; }
+.stat-grid.three .stat-num { font-size: 1.35rem; }
+.rep-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 0.95rem; }
+.rep-table th { background: var(--gold-soft); color: var(--brown); padding: 9px 6px; text-align: center; cursor: pointer; font-weight: 700; }
+.rep-table th:first-child, .rep-table td:first-child { text-align: right; }
+.rep-table td { padding: 9px 6px; border-bottom: 1px solid var(--line); text-align: center; }
+.rep-table tbody tr[data-s] { cursor: pointer; }
+.rep-table tbody tr[data-s]:active { background: var(--gold-soft); }
+.stu-cell { color: var(--brown); font-weight: 700; }
+.rep-table.detail td { font-size: 0.88rem; vertical-align: top; }
+.rep-table .note { color: var(--muted); margin-top: 4px; }
+.grades-row { display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.9rem; color: var(--muted); margin-top: 8px; }
+.stu-report-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.stu-report-head img { width: 64px; }
+.stu-report-head h3 { margin: 0 0 2px; }
+#stuModal { max-width: 640px; }
+#stuModal .row { display: flex; gap: 10px; margin-top: 14px; }
+#stuModal .row .btn { margin-top: 0; }
+.print-head, #printArea { display: none; }
+
+@media print {
+  @page { size: A4; margin: 12mm; }
+  body { background: #fff; }
+  .no-print, .topbar, dialog, .toast { display: none !important; }
+  .container { max-width: none; padding: 0; }
+  .print-head { display: flex; align-items: center; gap: 14px; border-bottom: 2px solid var(--gold); padding-bottom: 10px; margin-bottom: 14px; }
+  .print-head img { width: 70px; }
+  .print-head h2 { margin: 0; color: var(--brown); font-size: 1.3rem; }
+  .rep-card, .stat, .card-box { break-inside: avoid; box-shadow: none; }
+  .rep-table tr { break-inside: avoid; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body.print-student > *:not(#printArea) { display: none !important; }
+  body.print-student #printArea { display: block; }
+}
