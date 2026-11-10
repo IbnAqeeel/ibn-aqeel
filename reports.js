@@ -65,6 +65,7 @@ function computeRange() {
 // ---------- الحسابات ----------
 function emptyStats() {
   return { present: 0, late: 0, excused: 0, absent: 0, attended: 0, hifzCount: 0, reviewCount: 0,
+    sessions: 0, hifzInSession: 0, reviewInSession: 0,
     hifzPages: 0, reviewPages: 0, grades: { "ممتاز": 0, "جيد": 0, "مقبول": 0, "ضعيف": 0 }, days: new Set() };
 }
 function addRec(st, r) {
@@ -76,9 +77,18 @@ function addRec(st, r) {
     if (+h.pages) st.hifzPages += +h.pages;
     if (h.grade && st.grades[h.grade] !== undefined) st.grades[h.grade]++;
   }
-  if (v && (v.value || v.from || v.to || v.grade || v.pages)) {
+  const hasV = !!(v && (v.value || v.from || v.to || v.grade || v.pages));
+  if (hasV) {
     st.reviewCount++;
     if (+v.pages) st.reviewPages += +v.pages;
+  }
+  // جلسة = حضر (أو ما انسجل حضوره لكن سمّع)
+  const hasH = !!(h && (h.surah || h.from || h.to || h.grade || h.pages));
+  const inSession = r.attendance === "present" || r.attendance === "late" || (!r.attendance && (hasH || hasV));
+  if (inSession) {
+    st.sessions++;
+    if (hasH) st.hifzInSession++;
+    if (hasV) st.reviewInSession++;
   }
 }
 function finish(st) {
@@ -86,8 +96,8 @@ function finish(st) {
   const counted = attended + st.absent; // المعذور ما يُحسب ضده
   st.attended = attended;
   st.rate = counted ? Math.round((attended / counted) * 100) : null;
-  st.hifzRate = attended ? Math.min(100, Math.round((st.hifzCount / attended) * 100)) : null;
-  st.reviewRate = attended ? Math.min(100, Math.round((st.reviewCount / attended) * 100)) : null;
+  st.hifzRate = st.sessions ? Math.round((st.hifzInSession / st.sessions) * 100) : null;
+  st.reviewRate = st.sessions ? Math.round((st.reviewInSession / st.sessions) * 100) : null;
   return st;
 }
 
