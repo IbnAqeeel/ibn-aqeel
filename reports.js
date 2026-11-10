@@ -263,6 +263,148 @@ $("stuPrint").onclick = () => {
   window.print(); // لازم مباشرة بعد الضغط (الآيفون يمنعها لو تأخرت)
 };
 
+// ---------- بطاقة الإنجاز (صورة) ----------
+let cardFile = null;
+let logoImg = null;
+
+function loadLogo() {
+  if (logoImg) return Promise.resolve(logoImg);
+  return new Promise((res) => {
+    const im = new Image();
+    im.onload = () => { logoImg = im; res(im); };
+    im.onerror = () => res(null);
+    im.src = "logo.png";
+  });
+}
+
+function rr(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function fitText(ctx, text, maxW, size, weight = 700) {
+  let s = size;
+  do { ctx.font = `${weight} ${s}px Tajawal, sans-serif`; s -= 2; } while (ctx.measureText(text).width > maxW && s > 20);
+}
+
+async function drawCard(d, x, msg) {
+  await Promise.all([
+    document.fonts.load("700 40px Tajawal"), document.fonts.load("500 40px Tajawal"), document.fonts.load("400 40px Tajawal")
+  ]).catch(() => {});
+  const logo = await loadLogo();
+  const W = 1080, H = 1350;
+  const c = document.createElement("canvas");
+  c.width = W; c.height = H;
+  const ctx = c.getContext("2d");
+  ctx.direction = "rtl";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  const BROWN = "#665527", GOLD = "#bda23b", SOFT = "#f3ecd6", MUTED = "#7a7360";
+
+  // الخلفية والإطار
+  ctx.fillStyle = "#faf8f2"; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = GOLD; ctx.lineWidth = 10; rr(ctx, 30, 30, W - 60, H - 60, 40); ctx.stroke();
+  ctx.strokeStyle = "rgba(189,162,59,0.4)"; ctx.lineWidth = 3; rr(ctx, 52, 52, W - 104, H - 104, 30); ctx.stroke();
+
+  // الشعار
+  if (logo) {
+    const lw = 260, lh = lw * (logo.height / logo.width);
+    ctx.drawImage(logo, (W - lw) / 2, 90, lw, lh);
+  }
+
+  // العنوان
+  ctx.fillStyle = GOLD; ctx.font = "700 46px Tajawal, sans-serif";
+  ctx.fillText("✦ بطاقة إنجاز ✦", W / 2, 420);
+
+  // اسم الطالب
+  ctx.fillStyle = BROWN; fitText(ctx, x.name, W - 200, 84);
+  ctx.fillText(x.name, W / 2, 520);
+  ctx.fillStyle = MUTED; ctx.font = "500 40px Tajawal, sans-serif";
+  ctx.fillText(d.halaqa.name, W / 2, 595);
+  ctx.font = "400 34px Tajawal, sans-serif";
+  ctx.fillText(range.label.replace(" هـ", ""), W / 2, 650);
+
+  // المربعات الثلاثة
+  const st = x.st;
+  const boxes = [
+    [st.rate === null ? "—" : ar(st.rate) + "٪", "نسبة الحضور"],
+    [fmt(st.hifzPages), "وجه حفظ"],
+    [fmt(st.reviewPages), "وجه مراجعة"]
+  ];
+  const bw = 280, bh = 210, gap = 30, bx0 = (W - (bw * 3 + gap * 2)) / 2, by = 720;
+  boxes.forEach(([num, label], i) => {
+    const bx = W - bx0 - bw - i * (bw + gap); // من اليمين
+    ctx.fillStyle = "#ffffff"; rr(ctx, bx, by, bw, bh, 28); ctx.fill();
+    ctx.strokeStyle = "#ece6d6"; ctx.lineWidth = 3; ctx.stroke();
+    ctx.fillStyle = GOLD; rr(ctx, bx, by, bw, 14, 7); ctx.fill();
+    ctx.fillStyle = BROWN; ctx.font = "700 76px Tajawal, sans-serif";
+    ctx.fillText(num, bx + bw / 2, by + 95);
+    ctx.fillStyle = MUTED; ctx.font = "500 34px Tajawal, sans-serif";
+    ctx.fillText(label, bx + bw / 2, by + 165);
+  });
+
+  // آخر حفظ + الممتاز
+  const lastH = x.recs.filter((r) => r.hifz && r.hifz.surah).slice(-1)[0];
+  let line = 990;
+  ctx.fillStyle = SOFT; rr(ctx, 120, 965, W - 240, lastH || st.grades["ممتاز"] ? 150 : 0, 24); ctx.fill();
+  if (lastH) {
+    const h = lastH.hifz;
+    const t = "آخر ما حفظ: سورة " + surahName(h.surah) + (h.from || h.to ? ` (${ar(h.from ?? "")}${h.to ? "–" + ar(h.to) : ""})` : "");
+    ctx.fillStyle = BROWN; fitText(ctx, t, W - 300, 40, 500);
+    ctx.fillText(t, W / 2, line + 20); line += 70;
+  }
+  if (st.grades["ممتاز"]) {
+    ctx.fillStyle = BROWN; ctx.font = "500 38px Tajawal, sans-serif";
+    ctx.fillText(`حصل على تقدير "ممتاز" ${ar(st.grades["ممتاز"])} مرة 🌟`, W / 2, line + 20);
+  }
+
+  // العبارة التشجيعية
+  if (msg) {
+    ctx.fillStyle = GOLD; fitText(ctx, msg, W - 220, 46);
+    ctx.fillText(msg, W / 2, 1180);
+  }
+  ctx.fillStyle = MUTED; ctx.font = "400 30px Tajawal, sans-serif";
+  ctx.fillText("حلقة ابن عقيل لتحفيظ القرآن الكريم", W / 2, 1255);
+  return c;
+}
+
+async function makeCard() {
+  const { d, x } = currentStudent;
+  const c = await drawCard(d, x, $("cardMsg").value.trim());
+  const blob = await new Promise((r) => c.toBlob(r, "image/png"));
+  const fname = `بطاقة-${x.name.replace(/\s+/g, "-")}.png`;
+  cardFile = new File([blob], fname, { type: "image/png" });
+  const url = URL.createObjectURL(blob);
+  $("cardImg").src = url;
+  $("cardDownload").href = url;
+  $("cardDownload").download = fname;
+}
+
+$("stuCard").onclick = async () => {
+  $("stuModal").close();
+  $("cardImg").removeAttribute("src");
+  $("cardModal").showModal();
+  document.activeElement && document.activeElement.blur();
+  try { await makeCard(); } catch (e) { toast("ما قدرت أسوي البطاقة: " + e.message, true); }
+};
+let msgTimer;
+$("cardMsg").oninput = () => { clearTimeout(msgTimer); msgTimer = setTimeout(makeCard, 500); };
+$("cardClose").onclick = () => $("cardModal").close();
+$("cardShare").onclick = async () => {
+  if (!cardFile) return;
+  if (navigator.canShare && navigator.canShare({ files: [cardFile] })) {
+    try { await navigator.share({ files: [cardFile] }); } catch {}
+  } else {
+    $("cardDownload").click();
+    toast("نزّلت الصورة، أرسلها من الواتساب");
+  }
+};
+
 // ---------- التصدير ----------
 $("pdfBtn").onclick = () => {
   document.body.classList.remove("print-student");

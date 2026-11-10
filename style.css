@@ -499,3 +499,13 @@ a.link-btn { text-decoration: none; font-size: 0.95rem; white-space: nowrap; }
   body.print-student > *:not(#printArea) { display: none !important; }
   body.print-student #printArea { display: block; }
 }
+
+/* ---------- المرحلة ٧: بطاقة الإنجاز ---------- */
+.btn.gold { background: var(--gold); }
+#cardModal { max-width: 460px; }
+#cardModal h3 { text-align: center; }
+.card-preview { width: 100%; border-radius: 12px; border: 1px solid var(--line); display: block; min-height: 200px; background: var(--gold-soft); }
+#cardModal .mini-label { display: block; margin-top: 12px; }
+#cardModal .search { margin-top: 6px; }
+#cardModal .row { display: flex; gap: 10px; margin-top: 12px; }
+#cardModal .row .btn { margin-top: 0; text-align: center; text-decoration: none; }

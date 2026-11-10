@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=7">
+  <link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
   <header class="topbar no-print">
@@ -57,11 +57,25 @@
     <div id="stuBody"></div>
     <div class="row no-print">
       <button class="btn" id="stuPrint">📄 تقرير الطالب PDF</button>
-      <button class="btn secondary" id="stuClose">إغلاق</button>
+      <button class="btn gold" id="stuCard">🏅 بطاقة إنجاز</button>
     </div>
+    <button class="btn secondary no-print" id="stuClose">إغلاق</button>
+  </dialog>
+
+  <dialog id="cardModal">
+    <h3>بطاقة الإنجاز</h3>
+    <img id="cardImg" class="card-preview" alt="بطاقة الإنجاز">
+    <label class="mini-label">العبارة التشجيعية
+      <input id="cardMsg" class="search" value="بارك الله فيك، وجعلك من أهل القرآن">
+    </label>
+    <div class="row">
+      <button class="btn whatsapp" id="cardShare">مشاركة / واتساب</button>
+      <a class="btn secondary" id="cardDownload" download="بطاقة-إنجاز.png">⬇️ تنزيل</a>
+    </div>
+    <button class="btn secondary" id="cardClose">إغلاق</button>
   </dialog>
 
   <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
-  <script type="module" src="reports.js?v=8"></script>
+  <script type="module" src="reports.js?v=9"></script>
 </body>
 </html>
