@@ -1,5 +1,5 @@
 // صفحة ولي الأمر: عرض فقط
-import { db, esc, dateStr, parseDate, prettyDate, DAY_NAMES } from "./common.js?v=5";
+import { db, esc, dateStr, parseDate, prettyDate, DAY_NAMES } from "./common.js?v=11";
 import { surahName } from "./quran.js?v=5";
 import { doc, getDoc, collection, getDocs }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";

@@ -1,4 +1,4 @@
-import { db, requireRole, logout, toast, esc, dateStr, parseDate, prettyDate } from "./common.js?v=5";
+import { db, requireRole, logout, toast, esc, dateStr, parseDate, prettyDate } from "./common.js?v=11";
 import { SURAHS, surahName } from "./quran.js?v=5";
 import {
   collection, doc, getDoc, getDocs, query, where, orderBy, limit, writeBatch, serverTimestamp

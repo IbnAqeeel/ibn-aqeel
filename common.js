@@ -2,16 +2,15 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, doc, getDoc }
+import { initializeFirestore, memoryLocalCache, doc, getDoc }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { firebaseConfig, SITE, ADMIN_EMAILS } from "./config.js?v=5";
 
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-// نحفظ نسخة على الجهاز: لو انقطع النت، التسجيل يُحفظ ويُرسل لما يرجع
-export const db = initializeFirestore(app, {
-  localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
-});
+// ذاكرة مؤقتة داخل الصفحة: أسرع بكثير في التنقل بين الصفحات (خصوصاً الآيفون)
+// ولو انقطع النت، التسجيل ينتظر ويُرسل أول ما يرجع (ما دامت الصفحة مفتوحة)
+export const db = initializeFirestore(app, { localCache: memoryLocalCache() });
 export { SITE };
 
 export const DAY_NAMES = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];

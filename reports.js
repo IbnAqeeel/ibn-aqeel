@@ -1,4 +1,4 @@
-import { db, requireRole, toast, esc, dateStr, parseDate, prettyDate, DAY_NAMES } from "./common.js?v=5";
+import { db, requireRole, toast, esc, dateStr, parseDate, prettyDate, DAY_NAMES } from "./common.js?v=11";
 import { surahName } from "./quran.js?v=5";
 import { collection, getDocs, query, where }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
