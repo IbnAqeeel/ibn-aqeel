@@ -260,12 +260,14 @@ $("stuPrint").onclick = () => {
   $("printArea").innerHTML = studentHTML(d, x);
   $("stuModal").close();
   document.body.classList.add("print-student");
-  setTimeout(() => window.print(), 300);
+  window.print(); // لازم مباشرة بعد الضغط (الآيفون يمنعها لو تأخرت)
 };
-window.addEventListener("afterprint", () => document.body.classList.remove("print-student"));
 
 // ---------- التصدير ----------
-$("pdfBtn").onclick = () => window.print();
+$("pdfBtn").onclick = () => {
+  document.body.classList.remove("print-student");
+  window.print();
+};
 
 $("xlsBtn").onclick = () => {
   if (typeof XLSX === "undefined") return toast("ما تحملت أداة Excel، حدّث الصفحة", true);
